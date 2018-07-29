@@ -59,10 +59,10 @@ def chebyshev_hpf(cutoff_frequency=1e9, ripple=0.2, characteristic_impedance=50,
     return l, c
 
 
-def chebyshev_bpf(cutoff_frequency=1e9, bandwidth=1e6, ripple=0.2, characteristic_impedance=50, order=2):
+def chebyshev_bpf(center_frequency=1e9, bandwidth=1e6, ripple=0.2, characteristic_impedance=50, order=2):
     kf = 2.0 * pi * (bandwidth / 2.0)
     kz = characteristic_impedance
-    wc_sq = (2.0 * pi * cutoff_frequency) ** 2
+    wc_sq = (2.0 * pi * center_frequency) ** 2
     if order % 2:
         order += 1
 
@@ -103,7 +103,7 @@ def chebyshev_bpf(cutoff_frequency=1e9, bandwidth=1e6, ripple=0.2, characteristi
 # C = C_reference / (kf * kz)
 
 if __name__ == '__main__':
-    ls, cs, lp, cp = chebyshev_bpf(cutoff_frequency=1e9, bandwidth=1e6, ripple=0.2, characteristic_impedance=50, order=5)
+    ls, cs, lp, cp = chebyshev_bpf(center_frequency=5e9, bandwidth=100e6, ripple=0.2, characteristic_impedance=50, order=6)
     print(ls)
     print(cs)
     print(lp)
