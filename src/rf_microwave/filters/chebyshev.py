@@ -83,7 +83,14 @@ def chebyshev_bpf(center_frequency=1e9, bandwidth=1e6, ripple=0.2, characteristi
             cp.append(c / 2)
             lp.append(2.0 / (wc_sq * c))
 
-    return ls, cs, lp, cp
+    output = {
+        "L_series": ls,
+        "C_series": cs,
+        "L_shunt": lp,
+        "C_shunt": cp
+    }
+
+    return output
 
 # STEP 1: COMPUTE g-Values
 
@@ -101,6 +108,7 @@ def chebyshev_bpf(center_frequency=1e9, bandwidth=1e6, ripple=0.2, characteristi
 # R = kz * R_reference
 # L = kz * L_reference / kf
 # C = C_reference / (kf * kz)
+
 
 if __name__ == '__main__':
     ls, cs, lp, cp = chebyshev_bpf(center_frequency=5e9, bandwidth=100e6, ripple=0.2, characteristic_impedance=50, order=6)
