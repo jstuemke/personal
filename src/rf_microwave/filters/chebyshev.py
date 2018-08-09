@@ -3,6 +3,25 @@ from math import sin, sinh, atanh, sqrt, pi
 from numpy import array
 
 
+def _pi_network_z_parameters(z1, z2, z3):
+
+    k = z1 * z3 / (z1 + z2 + z3)
+
+    k1 = 1.0 + z2 / z3
+    k2 = 1.0 + z2 / z1
+
+    return k * array([k1, 1.0, 1.0, k2]).reshape(2, 2)
+
+
+def _l_network_z_parameters(z1, z2, shunt_first=True):
+
+    if not shunt_first:
+        raise NotImplementedError("Series-First has not yet been implemented")
+
+    return array([z1, z1, z1, z1 + z2]).reshape(2, 2)
+
+
+
 def chebyshev_coeffs(order=1, ripple=0.2):
     """
 
@@ -63,34 +82,22 @@ def chebyshev_bpf(center_frequency=1e9, bandwidth=1e6, ripple=0.2, characteristi
     kf = 2.0 * pi * (bandwidth / 2.0)
     kz = characteristic_impedance
     wc_sq = (2.0 * pi * center_frequency) ** 2
-    if order % 2:
-        order += 1
 
-    order = int(order / 2)
     g = chebyshev_coeffs(order, ripple=ripple)
 
-    ls = []
-    cs = []
-    lp = []
-    cp = []
+    # order is shunt C, shunt L, series L, series C
+    values = []
     for idx in range(len(g)):
         if idx % 2:
             l = kz * g[idx] / kf
-            ls.append(l / 2.0)
-            cs.append(2.0 / (wc_sq * l))
+            values.append(l / 2.0)
+            values.append(2.0 / (wc_sq * l))
         else:
             c = g[idx] / (kz * kf)
-            cp.append(c / 2)
-            lp.append(2.0 / (wc_sq * c))
+            values.append(c / 2)
+            values.append(2.0 / (wc_sq * c))
 
-    output = {
-        "L_series": ls,
-        "C_series": cs,
-        "L_shunt": lp,
-        "C_shunt": cp
-    }
-
-    return output
+    return values
 
 # STEP 1: COMPUTE g-Values
 
@@ -111,11 +118,8 @@ def chebyshev_bpf(center_frequency=1e9, bandwidth=1e6, ripple=0.2, characteristi
 
 
 if __name__ == '__main__':
-    ls, cs, lp, cp = chebyshev_bpf(center_frequency=5e9, bandwidth=100e6, ripple=0.2, characteristic_impedance=50, order=6)
-    print(ls)
-    print(cs)
-    print(lp)
-    print(cp)
+    bpf = chebyshev_bpf(center_frequency=5e9, bandwidth=100e6, ripple=0.2, characteristic_impedance=50, order=5)
+    print(bpf)
 
 
 
