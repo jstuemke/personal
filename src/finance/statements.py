@@ -1,6 +1,7 @@
 import re
 import numpy as np
 from typing import List
+from datetime import datetime
 
 from PyPDF2 import PdfFileReader
 from src.finance.known_businesses import BUSINESSES_SHORTHAND, BUSINESS_DETAILS
@@ -127,9 +128,8 @@ class BankStatement(List):
         self._account_number = None
         self._expense_total = None
         self._daily_mean = None
-        self._expense_amounts = None
-        self._dates = None
-        self._categories = {}
+        self._expenses = None
+        self._categories = None
 
         with open(path_to_pdf, 'rb') as pdf:
             filereader = PdfFileReader(pdf)
@@ -140,9 +140,10 @@ class BankStatement(List):
                 group = item.group(0).split(" ")
                 self.account_number = int(group[0])
                 date_range = ''.join(group[1:]).split("-")
-                self._period_start = date_range[0]
-                self._period_end = date_range[1]
+                self._period_start = datetime.strptime(date_range[0], "%m/%d/%Y")
+                self._period_end = datetime.strptime(date_range[1], "%m/%d/%Y")
 
+            self.categories = {}
             for page in filereader.pages:
                 page_text = page.extractText().replace("\n", " ")
 
@@ -153,10 +154,10 @@ class BankStatement(List):
 
                         expense = SunTrustExpense(transaction_details=item.group(0))
                         self.append(expense)
-                        if expense.category not in self._categories:
-                            self._categories[expense.category] = expense.amount
+                        if expense.category not in self.categories:
+                            self.categories[expense.category] = expense.amount
                         else:
-                            self._categories[expense.category] += expense.amount
+                            self.categories[expense.category] += expense.amount
 
                         # print("We spent $%.2f at %s on %s" % (expense.amount, expense.company, expense.transaction_date))
 
@@ -166,30 +167,30 @@ class BankStatement(List):
                 if "Totals" in page_text:
                     if "Credit and Debit Totals" in page_text:
                         break
-        self.dates = []
-        self.expense_amounts = []
+
+        self.expenses = {}
+
         for expense in self:
             current_date = expense.transaction_date
             current_amount = expense.amount
-            if current_date in self.dates:
-                self.expense_amounts[self.dates.index(current_date)] += current_amount
+            if current_date in self.expenses:
+                self.expenses[current_date] += current_amount
             else:
-                self.dates.append(current_date)
-                self.expense_amounts.append(current_amount)
+                self.expenses[current_date] = current_amount
 
-        self.daily_mean = np.mean(self.expense_amounts)
-
+        self.daily_mean = sum(self.expenses.values()) / (self.period_end - self.period_start).days
 
     def plot_expenses(self):
 
+        dates, amounts = zip(*sorted(self.expenses.items(), key=lambda t: t[0]))
+
         plt.figure()
-        plt.plot(self.dates, self.expense_amounts)
-        plt.plot([self.dates[0], self.dates[-1]], [self.daily_mean, self.daily_mean])
-        plt.title("Expense Breakdown for %s - %s" % (self.period_start, self.period_end))
+        plt.plot(dates, amounts)
+        plt.plot([dates[0], dates[-1]], [self.daily_mean, self.daily_mean])
+        plt.title("Expense Breakdown for %s - %s" % (self.period_start.strftime("%m/%d/%y"), self.period_end.strftime("%m/%d/%y")))
         plt.ylabel("Total Daily Expenses ($)")
         plt.xlabel("Date")
         plt.legend(["Daily Expenses", "Average Daily Expense: $%.2f" % self.daily_mean])
-
 
     @property
     def period_start(self):
@@ -232,20 +233,20 @@ class BankStatement(List):
         self._daily_mean = value
 
     @property
-    def expense_amounts(self):
-        return self._expense_amounts
+    def expenses(self):
+        return self._expenses
 
-    @expense_amounts.setter
-    def expense_amounts(self, value):
-        self._expense_amounts = value
+    @expenses.setter
+    def expenses(self, value):
+        self._expenses = value
 
     @property
-    def dates(self):
-        return self._dates
+    def categories(self):
+        return self._categories
 
-    @dates.setter
-    def dates(self, value):
-        self._dates = value
+    @categories.setter
+    def categories(self, value):
+        self._categories = value
 
 
 if __name__ == '__main__':
@@ -260,24 +261,13 @@ if __name__ == '__main__':
         "july",
         "august",
     ]
-    totals = []
-    paypal = 0
     for month in months:
         statement = BankStatement("C:\\Users\\Luke\\Documents\\Statements\\statement_%s2018.pdf" % month)
+        categories, amounts = zip(*statement.categories.items())
+        plt.figure()
+        plt.pie(amounts, startangle=90)
+        plt.axis('equal')
+        plt.legend(["%s - %.2f%%" % (t[0], 100 * t[1] / statement.expense_total) for t in statement.categories.items()])
+        plt.title(month)
 
-        # print("In %s, we spent $%.2f" % (month, statement.expense_total))
-
-        for expense in statement:
-            if expense.company == "Paypal":
-                print(expense.details)
-                paypal += expense.amount
-
-        totals.append(statement.expense_total)
-        # statement.plot_expenses()
-
-    print("Christa spent $%.2f on Rae Dunn this year." % paypal)
-    # plt.figure()
-    # plt.plot(months, totals)
-    # plt.ylim([0, 15000])
-    # plt.show()
-
+    plt.show()
