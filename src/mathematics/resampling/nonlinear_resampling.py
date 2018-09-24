@@ -102,6 +102,7 @@ if __name__ == "__main__":
     resampled = _closed_loop_resample(data, start_threshold=1, max_percentage=7)
     print(len(resampled))
 
+
     xr, yr = zip(*[(v['x'], v['y']) for v in resampled])
 
     plt.plot(x, y_noisy)
