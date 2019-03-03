@@ -73,5 +73,5 @@ if __name__ == '__main__':
     print(riemann_sum(f, start, stop, 10))
     print(trapezoidal(f, start, stop, 10))
     print(simpson(f, start, stop, 100))
-    plot_riemann_sum(f, start, stop, 4)
+    plot_riemann_sum(f, start, stop, 100, 'middle')
 
