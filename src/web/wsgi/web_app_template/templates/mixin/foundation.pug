@@ -1,0 +1,89 @@
+mixin row(row_style)
+    div.row(class = row_style)
+        block
+
+mixin krow(row_style,data_bind)
+    div.row(class = row_style, data-bind=data_bind)
+        block
+
+mixin idrow(row_id, row_style)
+    div.row(
+        id= row_id
+        class = row_style
+        )
+        block
+
+mixin erow(row_style)
+    div.row(class = row_style data-equalizer)
+        block
+
+mixin column(type,size,style)
+    - var temp = type +"-"+size+" columns " + style
+    div(class=temp)
+        block
+
+mixin idcolumn(col_id, type,size,style)
+    - var temp = type +"-"+size+" columns " + style
+    div(
+        id = col_id
+        class=temp
+        )
+        block
+
+mixin ecolumn(type,size,style)
+    - var temp = type +"-"+size+" columns " + style
+    div(class=temp data-equalizer-watch)
+        block
+
+mixin save_standard()
+    +krow("", "visible: (save_remote_check_state() == 'Standard')")
+        +row("")
+            +column("small","4","text-left")
+                label Wafer ID
+                    input(id="save_wafer_id", type="text", placeholder="", data-bind="value:save_wafer_id")
+                    span(class="form-error is-visible" data-bind="html:save_wafer_id_status(), visible:save_wafer_id_status()!=''")
+            +column("small","4","text-left")
+                label Wafer Number
+                    input(id="save_wafer_number", type="text", placeholder="", data-bind="value:save_wafer_number")
+                    span(class="form-error is-visible" data-bind="html:save_wafer_number_status(), visible:save_wafer_number_status()!=''")
+            +column("small","4","text-left")
+                label Wafer Scribe
+                    input(id="save_wafer_scribe", type="text", placeholder="", data-bind="value:save_wafer_scribe")
+                    span(class="form-error is-visible" data-bind="html:save_wafer_scribe_status(), visible:save_wafer_scribe_status()!=''")
+        +row("")
+            +column("small","4","text-left")
+                label Wafer Row
+                    input(id="save_wafer_row", type="text", placeholder="", data-bind="value:save_wafer_row")
+                    span(class="form-error is-visible" data-bind="html:save_wafer_row_status(), visible:save_wafer_row_status()!=''")
+            +column("small","4","text-left")
+                label Wafer Column
+                    input(id="save_wafer_column", type="text", placeholder="", data-bind="value:save_wafer_column")
+                    span(class="form-error is-visible" data-bind="html:save_wafer_column_status(), visible:save_wafer_column_status()!=''")
+            +column("small","4","text-left")
+                label Wafer Ordinal
+                    input(id="save_wafer_ordinal", type="text", placeholder="", data-bind="value:save_wafer_ordinal")
+                    span(class="form-error is-visible" data-bind="html:save_wafer_ordinal_status(), visible:save_wafer_ordinal_status()!=''")
+        +row("")
+            +column("small","6","text-left")
+                label Test Name
+                    input(id="save_test_name", type="text", placeholder="", data-bind="value:save_test_name")
+                    span(class="form-error is-visible" data-bind="html:save_test_name_status(), visible:save_test_name_status()!=''")
+            +column("small","6","text-left")
+                label Sub Die Name
+                    input(id="save_sub_die_name", type="text", placeholder="", data-bind="value:save_sub_die_name")
+                    span(class="form-error is-visible" data-bind="html:save_sub_die_name_status(), visible:save_sub_die_name_status()!=''")
+        +row("")
+            +column("small","4","text-left")
+                label Augment Number
+                    input(id="save_augment_number", type="text", placeholder="", data-bind="value:save_augment_number")
+                    span(class="form-error is-visible" data-bind="html:save_augment_number_status(), visible:save_augment_number_status()!=''")
+            +column("small","4","text-left")
+                label De-embed State
+                    input(id="save_de_embed", type="text", placeholder="", data-bind="value:save_de_embed")
+                    span(class="form-error is-visible" data-bind="html:save_de_embed_status(), visible:save_de_embed_status()!=''")
+            +column("small","4","text-left")
+                label File Type
+                    input(id="save_file_type", type="text", placeholder="", data-bind="value:save_file_type")
+                    span(class="form-error is-visible" data-bind="html:save_file_type_status(), visible:save_file_type_status()!=''")
+
+block layout

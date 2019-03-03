@@ -1,0 +1,13 @@
+{
+  "version": 3,
+  "file": "app_code.js",
+  "sourceRoot": "",
+  "sources": [
+    "app_code.coffee"
+  ],
+  "names": [],
+  "mappings": ";AAAA;EAAM,MAAM,CAAC,YAAb,MAAA,UAAA;IACE,WAAa,CAAA,CAAA;MACX,IAAC,CAAA,aAAD,GAAiB,EAAE,CAAC,UAAH,CAAc,EAAd;MACjB,IAAC,CAAA,iBAAD,GAAqB,EAAE,CAAC,UAAH,CAAc,EAAd;MAErB,IAAC,CAAA,UAAD,GAAc,CAAC,aAAD,CAAA,GAAA;AACZ,YAAA;QAAA,KAAA,GAAQ,CAAA,CAAE,aAAF;QACR,KAAK,CAAC,UAAN,CAAiB,MAAjB;eACA,IAAC,CAAA,aAAD,CAAe,aAAf;MAHY;MAKd,IAAC,CAAA,gBAAD,GAAoB,CAAA,CAAA,GAAA;QAClB,OAAO,CAAC,GAAR,CAAY,MAAZ;eAEA,CAAC,CAAC,IAAF,CAAO,OAAP,EACE;UAAA,OAAA,EAAS,eAAT;UACA,IAAA,EAAM,IAAC,CAAA;QADP,CADF,EAGE,CAAC,IAAD,CAAA,GAAA;AACE,cAAA;UAAA,MAAA,GAAS,IAAI,CAAC,KAAL,CAAW,IAAX;UACT,IAAG,MAAM,CAAC,KAAV;YACE,IAAC,CAAA,UAAD,CAAY,MAAM,CAAC,OAAnB,EADF;;QAFF,CAHF;MAHkB;MAYpB,IAAC,CAAA,aAAD,GAAiB,CAAA,CAAA,GAAA;eACf,OAAO,CAAC,GAAR,CAAY,SAAZ;MADe;IArBN;;EADf,EAAA;;;;;EA+BA,MAAM,CAAC,SAAP,GAAmB,IAAI,MAAM,CAAC,SAAX,CAAA;;EACnB,CAAA,CAAE,QAAA,CAAA,CAAA;IAEA,EAAE,CAAC,aAAH,CAAiB,MAAM,CAAC,SAAxB,EAAmC,CAAA,CAAE,WAAF,CAAe,CAAA,CAAA,CAAlD;IACA,EAAE,CAAC,aAAH,CAAiB,MAAM,CAAC,SAAxB,EAAmC,CAAA,CAAE,aAAF,CAAiB,CAAA,CAAA,CAApD;WAEA,MAAM,CAAC,SAAS,CAAC,aAAjB,CAAA;EALA,CAAF;AAhCA",
+  "sourcesContent": [
+    "class window.ViewModel\r\n  constructor: () ->\r\n    @error_message = ko.observable(\"\")\r\n    @sample_user_input = ko.observable(\"\")\r\n\r\n    @show_error = (error_message) =>\r\n      modal = $('#ErrorModal')\r\n      modal.foundation('open')\r\n      @error_message(error_message)\r\n\r\n    @sample_ajax_call = =>\r\n      console.log(\"AJAX\")\r\n\r\n      $.post 'ajax/',\r\n        request: \"ajax_callback\"\r\n        user: @sample_user_input\r\n        (data) =>\r\n          result = JSON.parse(data)\r\n          if result.Error\r\n            @show_error(result.Message)\r\n            return\r\n\r\n    @event_startup = =>\r\n      console.log(\"STARTUP\")\r\n\r\n\r\n\r\n\r\n# ******************************************************************************\r\n# Setup Knockout.js ViewModel\r\n# ******************************************************************************\r\nwindow.viewmodel = new window.ViewModel()\r\n$ ->\r\n\r\n  ko.applyBindings(window.viewmodel, $('#app_body')[0])\r\n  ko.applyBindings(window.viewmodel, $('#ErrorModal')[0])\r\n\r\n  window.viewmodel.event_startup()\r\n\r\n"
+  ]
+}

@@ -1,0 +1,28 @@
+extends mixin/foundation
+
+block layout
+    div(id="app_body")
+        +row("")
+            +column("large","12","")
+                h1.text-center Title
+                h4.text-center Subtitle
+        +row("full-width")
+            +column("large","12","")
+
+                ul(class="tabs", data-tabs, id="menu-tabs")
+                    li(class="tabs-title is-active")
+                        a(href="#upload_panel" aria-selected="true") Tab
+
+        +row("full-width")
+            +column("large","12","")
+                div(class="tabs-content" data-tabs-content="menu-tabs")
+
+                    div(class="tabs-panel" id="upload_panel")
+
+                        div
+                            +row("")
+                                +column("large","12","")
+                                    label Sample User Input Field
+                                    input(type="text", data-bind="value: sample_user_input")
+                                    button(class="button", type="button", data-bind="click: sample_ajax_call") Submit
+
