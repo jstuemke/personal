@@ -1,0 +1,9 @@
+extends mixin/foundation
+block layout
+    link(rel="stylesheet" href="{{url_for('static', filename='css/app.css')}}")
+    !=page_html
+
+    //script(type="text/javascript" src="{{url_for('asset', filename='js/d3.js')}}")
+    //script(type="text/javascript" src="{{url_for('asset', filename='js/plotly.js')}}")
+    //script(type="text/javascript" src="{{url_for('static', filename='script/app_code.js')}}")
+    //script(type="text/javascript" src="{{url_for('static', filename='js/onrun.js')}}")

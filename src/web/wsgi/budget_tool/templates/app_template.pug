@@ -1,0 +1,93 @@
+extends mixin/foundation
+
+block layout
+    div(id="app_body")
+        +row("")
+            +column("large","12","")
+                h1.text-center Title
+                h4.text-center Subtitle
+        +row("full-width")
+            +column("large","12","")
+
+                ul(class="tabs", data-tabs, id="menu-tabs")
+                    li(class="tabs-title is-active")
+                        a(href="#upload_panel" aria-selected="true") Tab
+
+        +row("full-width")
+            +column("large","12","")
+                div(class="tabs-content" data-tabs-content="menu-tabs")
+
+                    div(class="tabs-panel" id="upload_panel")
+
+                        div
+                            +row("")
+                                +column("large","12","")
+                                    input(type="file", id="budget_input_elem", accept=".csv", style="display:none", data-bind="event:{change:get_budget_csv}")
+                                    button(class="button", type="button", data-bind="click:handle_budget_upload") Upload Budget CSV
+                            +row("")
+                                +column("large","12","")
+                                    h5(data-bind="text: 'Pay Period Income: ' + total_income()")
+                                    h5(data-bind="text: 'Amount Budgeted: ' + total_budgeted()")
+                                    h5(data-bind="text: 'Unaccounted For: ' + unaccounted()")
+                            +row("")
+                                +column("large","12","")
+                                    button(class="button", type="button", data-bind="click:add_expense")
+                                        i(class="fi-plus")
+                                    +row("")
+                                        +column("large","3","")
+                                            label Category
+                                            select(data-bind="options: categories, value: selected_add_category, optionsText: 'category'")
+                                        +column("large","3","")
+                                            label Subcategory
+                                            //ko if: categories().length
+                                            select(data-bind="options: selected_add_category().subcategories, value: selected_add_subcategory, optionsText: 'name'")
+                                            // /ko
+                                        +column("large","3","")
+                                            label Amount
+                                            input(type="number", data-bind="value: add_expense_amount")
+                                        +column("large","3","")
+                                            label Notes
+                                            input(type="text", data-bind="value: add_expense_notes")
+                            +row("")
+                                +column("large","12","")
+                                    //ko foreach:{data: categories, as: 'x'}
+                                    +row("")
+                                        +column("large","6","")
+                                            h3.text-center(data-bind="text: x.category")
+                                            table
+                                                thead
+                                                    tr
+                                                        th Allocated
+                                                        th Spent
+                                                        th Remaining
+                                                tbody
+                                                    tr
+                                                        td
+                                                            span(data-bind="text: x.allocated")
+                                                        td
+                                                            span(data-bind="text: x.spent")
+                                                        td
+                                                            span(data-bind="text: x.remaining")
+                                        +column("large","6","")
+                                            table
+                                                thead
+                                                    tr
+                                                        th Name
+                                                        th Allocated
+                                                        th Spent
+                                                        th Remaining
+                                                tbody
+                                                    //ko foreach:{data: x.subcategories, as: 'y'}
+                                                    tr
+                                                        td
+                                                            input(data-bind="value: y.name, visible: y.edit(), event:{change: $root.something_changed.bind($data, $parentContext.$index(), $index())}")
+                                                            span(data-bind="text: y.name, click: y.toggle_edit, visible: !y.edit()")
+                                                        td
+                                                            input(data-bind="value: y.allocated, visible: y.edit(), event:{change: $root.something_changed.bind($data, $parentContext.$index(), $index())}")
+                                                            span(data-bind="text: y.allocated, click: y.toggle_edit, visible: !y.edit()")
+                                                        td
+                                                            span(data-bind="text: y.spent")
+                                                        td
+                                                            span(data-bind="text: y.remaining")
+                                                    // /ko
+                                    // /ko
